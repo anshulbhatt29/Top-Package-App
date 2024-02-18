@@ -29,11 +29,12 @@ const GithubDependencies = mongoose.model('GithubDependencies', GithubDependenci
 
 const GithubRepositories = mongoose.model('GithubRepositories', GithubRepositoriesSchema);
 
-// Define the endpoint to handle POST requests from the frontend
+
 app.post('/import-package-json', async (req, res) => {
     try {
         const { packageJson } = req.body;
-
+        
+        if(packageJson.dependencies !== undefined){
         for (let dependency in packageJson.dependencies) {
             let existingDependency = await GithubDependencies.findOne({ Name: dependency });
             if (existingDependency) {
@@ -47,7 +48,8 @@ app.post('/import-package-json', async (req, res) => {
                 await newDependency.save();//model.save...
             }
         }
-
+    }
+        if(packageJson.devDependencies !== undefined) {
         for (let devDependency in packageJson.devDependencies) {
             let existingDependency = await GithubDependencies.findOne({ Name: devDependency });
             if (existingDependency) {
@@ -61,6 +63,7 @@ app.post('/import-package-json', async (req, res) => {
                 await newDependency.save();
             }
         }
+    }
 
         res.status(200).json({ message: 'Package JSON imported successfully' });
     } catch (error) {

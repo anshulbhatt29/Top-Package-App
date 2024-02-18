@@ -49,7 +49,6 @@ const SearchRepositories = ({ toggleTopPackages }) => {
 
   const handleImport = async (owner, repo, id) => {
     try {
-      setImport((preImport)=>!preImport);
       const idExists = await isIdPresent(id);
       if (!idExists) {
         const response = await axios.get(
@@ -68,6 +67,7 @@ const SearchRepositories = ({ toggleTopPackages }) => {
           console.log("No content found in the response.");
         }
         await axios.post("http://localhost:5000/save-id", { id });
+        setImport((preImport)=>!preImport);
       }
      
     } catch (error) {
@@ -77,6 +77,7 @@ const SearchRepositories = ({ toggleTopPackages }) => {
 
   return (
     <div>
+    <h1>Search Your Repositories</h1>
       <input
         type="text"
         value={keyword}
@@ -89,8 +90,7 @@ const SearchRepositories = ({ toggleTopPackages }) => {
           <li
             key={repository.id}
             style={{
-              color: idExistsMap[repository.id] ? "green" : "black", // Change color based on ID presence
-              /* Add more inline styles here as needed */
+              color: idExistsMap[repository.id] ? "green" : "black", 
             }}
           >
             {repository.full_name}, Forks: {repository.forks}, Stars:{" "}
